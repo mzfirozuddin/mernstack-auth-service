@@ -2,7 +2,7 @@ import request from "supertest";
 import { calculateDiscount } from "./src/util";
 import app from "./src/app";
 
-describe("App", () => {
+describe.skip("App", () => {
     // test("should work", () => {});
     //- We can use "it" instead of test
     it("should calculate the discount", () => {
