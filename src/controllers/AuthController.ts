@@ -28,6 +28,8 @@ export class AuthController {
         //- Validation
         //: We have to validate the "req" first
         const result = validationResult(req);
+        // console.log(result);
+
         // result.isEmpty() == true means no error.
         if (!result.isEmpty()) {
             return res.status(400).json({ error: result.array() });
