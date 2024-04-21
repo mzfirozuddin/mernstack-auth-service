@@ -62,6 +62,24 @@ export class AuthController {
             });
 
             this.logger.info("User has been registered", { id: user.id });
+
+            const accessToken = "dfdgggcvd";
+            const refreshToken = "dfdgggcvd";
+
+            res.cookie("accessToken", accessToken, {
+                domain: "localhost",
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60, // 1 hour
+                httpOnly: true, // Very Important
+            });
+
+            res.cookie("refreshToken", refreshToken, {
+                domain: "localhost",
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+                httpOnly: true, // Very Important
+            });
+
             res.status(201).json({ id: user.id });
         } catch (err) {
             next(err);
