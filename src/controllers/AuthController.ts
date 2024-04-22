@@ -7,6 +7,7 @@ import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
+import { Config } from "../config";
 // import createHttpError from "http-errors";
 
 export class AuthController {
@@ -96,7 +97,15 @@ export class AuthController {
 
             // console.log(accessToken);
 
-            const refreshToken = "dfdgggcvd";
+            const refreshToken = jwt.sign(
+                payload,
+                Config.REFRESH_TOKEN_SECRET!,
+                {
+                    algorithm: "HS256",
+                    expiresIn: "1y",
+                    issuer: "auth-service",
+                },
+            );
 
             //: set accessToken and refreshToke in cookies
             res.cookie("accessToken", accessToken, {
