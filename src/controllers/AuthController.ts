@@ -1,8 +1,12 @@
+import fs from "fs";
+import path from "path";
 import { NextFunction, Response } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { RegisterUserRequest } from "../types";
 import { UserService } from "../services/UserService";
 import { Logger } from "winston";
 import { validationResult } from "express-validator";
+import createHttpError from "http-errors";
 // import createHttpError from "http-errors";
 
 export class AuthController {
@@ -46,6 +50,7 @@ export class AuthController {
             return next(error);
         } */
 
+        //: use a logger
         this.logger.debug("New request to register a user", {
             firstName,
             lastName,
@@ -54,6 +59,7 @@ export class AuthController {
         });
 
         try {
+            //: save data on DB
             const user = await this.userService.create({
                 firstName,
                 lastName,
@@ -63,9 +69,36 @@ export class AuthController {
 
             this.logger.info("User has been registered", { id: user.id });
 
-            const accessToken = "dfdgggcvd";
+            //: generate access token and refresh token
+            let privateKey: Buffer;
+            try {
+                privateKey = fs.readFileSync(
+                    path.join(__dirname, "../../certs/private.pem"),
+                );
+            } catch (err) {
+                const error = createHttpError(
+                    500,
+                    "Error while reading private key",
+                );
+                return next(error);
+            }
+
+            const payload: JwtPayload = {
+                sub: String(user.id),
+                role: user.role,
+            };
+
+            const accessToken = jwt.sign(payload, privateKey, {
+                algorithm: "RS256",
+                expiresIn: "1h",
+                issuer: "auth-service",
+            });
+
+            // console.log(accessToken);
+
             const refreshToken = "dfdgggcvd";
 
+            //: set accessToken and refreshToke in cookies
             res.cookie("accessToken", accessToken, {
                 domain: "localhost",
                 sameSite: "strict",
