@@ -5,13 +5,15 @@ import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
 import logger from "../config/logger";
 import registerValidator from "../validators/register-validator";
+import { TokenService } from "../services/TokenService";
 // import { body } from "express-validator";
 
 const router = express.Router();
 
 const userRepository = AppDataSource.getRepository(User);
 const userService = new UserService(userRepository); //- Dependency Injection
-const authController = new AuthController(userService, logger); //- Dependency Injection
+const tokenService = new TokenService();
+const authController = new AuthController(userService, logger, tokenService); //- Dependency Injection
 
 // router.post("/register", authController.register);
 //: If binding issue is happen then do this
