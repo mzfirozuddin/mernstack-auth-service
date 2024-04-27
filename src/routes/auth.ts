@@ -6,13 +6,15 @@ import { User } from "../entity/User";
 import logger from "../config/logger";
 import registerValidator from "../validators/register-validator";
 import { TokenService } from "../services/TokenService";
+import { RefreshToken } from "../entity/RefreshToken";
 // import { body } from "express-validator";
 
 const router = express.Router();
 
 const userRepository = AppDataSource.getRepository(User);
 const userService = new UserService(userRepository); //- Dependency Injection
-const tokenService = new TokenService();
+const refreshTokenService = AppDataSource.getRepository(RefreshToken);
+const tokenService = new TokenService(refreshTokenService); //- Dependency Injection
 const authController = new AuthController(userService, logger, tokenService); //- Dependency Injection
 
 // router.post("/register", authController.register);
