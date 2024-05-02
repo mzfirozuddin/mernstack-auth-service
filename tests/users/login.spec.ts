@@ -56,7 +56,7 @@ describe("POST /auth/login", () => {
             }
 
             let accessToken = null;
-            let refreshToke = null;
+            let refreshToken = null;
 
             const cookies =
                 (response.headers as unknown as Headers)["set-cookie"] || [];
@@ -66,16 +66,16 @@ describe("POST /auth/login", () => {
                     accessToken = cookie.split(";")[0].split("=")[1];
                 }
 
-                if (cookie.startsWith("refreshToke=")) {
-                    refreshToke = cookie.split(";")[0].split("=")[1];
+                if (cookie.startsWith("refreshToken=")) {
+                    refreshToken = cookie.split(";")[0].split("=")[1];
                 }
             });
 
             expect(accessToken).not.toBeNull();
-            expect(refreshToke).not.toBeNull();
+            expect(refreshToken).not.toBeNull();
 
             expect(isJwt(accessToken)).toBeTruthy();
-            expect(isJwt(refreshToke)).toBeTruthy();
+            expect(isJwt(refreshToken)).toBeTruthy();
         });
 
         it("should return 400 status code if email or password is wrong", async () => {
