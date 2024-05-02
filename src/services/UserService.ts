@@ -40,4 +40,13 @@ export class UserService {
             throw error;
         }
     }
+
+    async findByEmail(email: string) {
+        //: check email is already present in DB or not.
+        const user = await this.userRepository.findOne({
+            where: { email },
+        });
+
+        return user;
+    }
 }

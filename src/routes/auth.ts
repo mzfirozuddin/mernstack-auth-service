@@ -7,6 +7,8 @@ import logger from "../config/logger";
 import registerValidator from "../validators/register-validator";
 import { TokenService } from "../services/TokenService";
 import { RefreshToken } from "../entity/RefreshToken";
+import loginValidator from "../validators/login-validator";
+import { CredentialService } from "../services/CredentialService";
 // import { body } from "express-validator";
 
 const router = express.Router();
@@ -15,7 +17,13 @@ const userRepository = AppDataSource.getRepository(User);
 const userService = new UserService(userRepository); //- Dependency Injection
 const refreshTokenService = AppDataSource.getRepository(RefreshToken);
 const tokenService = new TokenService(refreshTokenService); //- Dependency Injection
-const authController = new AuthController(userService, logger, tokenService); //- Dependency Injection
+const credentialService = new CredentialService();
+const authController = new AuthController(
+    userService,
+    logger,
+    tokenService,
+    credentialService,
+); //- Dependency Injection
 
 // router.post("/register", authController.register);
 //: If binding issue is happen then do this
@@ -24,6 +32,13 @@ router.post(
     registerValidator,
     (req: Request, res: Response, next: NextFunction) =>
         authController.register(req, res, next),
+);
+
+router.post(
+    "/login",
+    loginValidator,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.login(req, res, next),
 );
 
 export default router;
