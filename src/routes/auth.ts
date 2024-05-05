@@ -44,6 +44,7 @@ router.post(
 );
 
 //: Protected Route
+// authenticate middleware used to verify token and inject user(auth) data in "req" object
 router.get("/self", authenticate, (req: Request, res: Response) =>
     authController.self(req as AuthRequest, res),
 );
