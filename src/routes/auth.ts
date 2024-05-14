@@ -11,6 +11,7 @@ import loginValidator from "../validators/login-validator";
 import { CredentialService } from "../services/CredentialService";
 import authenticate from "../middlewares/authenticate";
 import { AuthRequest } from "../types";
+import validateRefreshToken from "../middlewares/validateRefreshToken";
 // import { body } from "express-validator";
 
 const router = express.Router();
@@ -47,6 +48,13 @@ router.post(
 // authenticate middleware used to verify token and inject user(auth) data in "req" object
 router.get("/self", authenticate, (req: Request, res: Response) =>
     authController.self(req as AuthRequest, res),
+);
+
+router.post(
+    "/refresh",
+    validateRefreshToken,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.refresh(req as AuthRequest, res, next),
 );
 
 export default router;

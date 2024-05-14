@@ -201,4 +201,74 @@ export class AuthController {
         const user = await this.userService.findById(Number(req.auth.sub));
         res.status(200).json({ ...user, password: undefined });
     }
+
+    async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+        // console.log((req as AuthRequest).auth);
+        // console.log(req.auth);
+
+        try {
+            //: Generate tokens
+            const payload: JwtPayload = {
+                sub: req.auth.sub,
+                role: req.auth.role,
+            };
+
+            const accessToken = this.tokenService.generateAccessToken(payload);
+            this.logger.info("New access token generated.");
+
+            // Check user present in DB or not
+            const user = await this.userService.findById(Number(req.auth.sub));
+            if (!user) {
+                const error = createHttpError(
+                    400,
+                    "User with the token could not find!",
+                );
+
+                return next(error);
+            }
+
+            //- Persist the refresh token in DB
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(user);
+
+            //- Delete old refresh token from DB
+            await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: String(newRefreshToken.id),
+            });
+
+            //: Add tokens to cookies
+            res.cookie("accessToken", accessToken, {
+                domain: "localhost",
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60, // 1 hour
+                httpOnly: true, // Very Important
+            });
+
+            res.cookie("refreshToken", refreshToken, {
+                domain: "localhost",
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+                httpOnly: true, // Very Important
+            });
+
+            //: log userId
+            this.logger.info("Access token refreshed successfully.", {
+                id: user.id,
+            });
+
+            //: Return the response (id)
+            res.status(200).json({
+                id: user.id,
+                message: "Token refreshed successfully.",
+            });
+        } catch (err) {
+            next(err);
+            return;
+        }
+
+        res.json({});
+    }
 }
