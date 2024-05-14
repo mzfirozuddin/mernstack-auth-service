@@ -268,7 +268,5 @@ export class AuthController {
             next(err);
             return;
         }
-
-        res.json({});
     }
 }
