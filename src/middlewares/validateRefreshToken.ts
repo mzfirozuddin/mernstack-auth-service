@@ -22,7 +22,7 @@ export default expressjwt({
         try {
             const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
             // If refreshToken not found then it return null
-            const refreshToken = refreshTokenRepo.findOne({
+            const refreshToken = await refreshTokenRepo.findOne({
                 where: {
                     id: Number((token?.payload as IRefreshTokenPayload).id),
                     user: {
@@ -30,6 +30,7 @@ export default expressjwt({
                     },
                 },
             });
+            // console.log("Flag: ", refreshToken);
 
             return refreshToken === null; // If refreshToken is null then it return true
         } catch (err) {
