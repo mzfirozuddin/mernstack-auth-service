@@ -1,8 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { User } from "../entity/User";
 import { Config } from ".";
-import { RefreshToken } from "../entity/RefreshToken";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -15,7 +13,8 @@ export const AppDataSource = new DataSource({
     // synchronize: Config.NODE_ENV === "test" || Config.NODE_ENV === "dev",
     synchronize: false,
     logging: false,
-    entities: [User, RefreshToken],
+    // entities: [User, RefreshToken],   // Manually Enter Entity name
+    entities: ["src/entity/*.ts"], // Wildcard:- Now it automatically pick up the names
     migrations: ["src/migration/*.ts"],
     subscribers: [],
 });
