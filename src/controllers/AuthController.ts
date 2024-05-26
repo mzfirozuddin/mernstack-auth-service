@@ -285,7 +285,7 @@ export class AuthController {
             res.clearCookie("refreshToken");
 
             //: return response
-            res.json({ message: "Logged out" });
+            res.status(200).json({ message: "Logged out" });
         } catch (err) {
             return next(err);
         }
