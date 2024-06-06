@@ -72,4 +72,48 @@ export class TenantController {
             return next(err);
         }
     }
+
+    async getOne(req: Request, res: Response, next: NextFunction) {
+        const tenantId = req.params.id;
+
+        if (isNaN(Number(tenantId))) {
+            next(createHttpError(400, "Invalid url params!"));
+            return;
+        }
+
+        try {
+            const tenant = await this.tenantService.getById(Number(tenantId));
+            if (!tenant) {
+                next(createHttpError(400, "Tenant does not exist!"));
+                return;
+            }
+
+            this.logger.info("Tenant has been fetched.");
+
+            res.status(200).json(tenant);
+        } catch (err) {
+            return next(err);
+        }
+    }
+
+    async destroy(req: Request, res: Response, next: NextFunction) {
+        const tenantId = req.params.id;
+
+        if (isNaN(Number(tenantId))) {
+            next(createHttpError(400, "Invalid url params!"));
+            return;
+        }
+
+        try {
+            await this.tenantService.deleteById(Number(tenantId));
+
+            this.logger.info("Tenant has been deleted!", {
+                id: Number(tenantId),
+            });
+
+            res.status(200).json({ id: Number(tenantId) });
+        } catch (err) {
+            return next(err);
+        }
+    }
 }
