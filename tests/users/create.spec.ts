@@ -94,5 +94,32 @@ describe("POST /users", () => {
             expect(users).toHaveLength(1);
             expect(users[0].role).toBe(Roles.MANAGER);
         });
+
+        it("should return 403 if non admin user tries to create a user", async () => {
+            const managerToken = jwks.token({
+                sub: "1",
+                role: Roles.MANAGER,
+            });
+
+            const userData = {
+                firstName: "Firoz",
+                lastName: "Uddin",
+                email: "uddin@gmail.com",
+                password: "secret@123",
+                tenantId: 1,
+            };
+
+            const response = await request(app)
+                .post("/users")
+                .set("Cookie", [`accessToken=${managerToken}`])
+                .send(userData);
+
+            expect(response.statusCode).toBe(403);
+
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+
+            expect(users).toHaveLength(0);
+        });
     });
 });
