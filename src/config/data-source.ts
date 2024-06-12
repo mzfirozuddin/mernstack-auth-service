@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
     synchronize: false,
     logging: false,
     // entities: [User, RefreshToken],   // Manually Enter Entity name
-    entities: ["src/entity/*.ts"], // Wildcard:- Now it automatically pick up the names
-    migrations: ["src/migration/*.ts"],
+    entities: ["src/entity/*.{ts,js}"], // Wildcard:- Now it automatically pick up the names
+    migrations: ["src/migration/*.{ts,js}"],
     subscribers: [],
 });
