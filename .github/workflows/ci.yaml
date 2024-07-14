@@ -11,7 +11,7 @@ on:
 jobs:
     build-and-test:
         name: Build the project
-        runs-on: ubantu-latest
+        runs-on: ubuntu-latest
         # if: github.event_name == 'pull_request'
         steps:
             - uses: actions/checkout@v3
