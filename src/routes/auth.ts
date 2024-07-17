@@ -1,4 +1,9 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, {
+    NextFunction,
+    Request,
+    // RequestHandler,
+    Response,
+} from "express";
 import { AuthController } from "../controllers/AuthController";
 import { UserService } from "../services/UserService";
 import { AppDataSource } from "../config/data-source";
@@ -37,6 +42,16 @@ router.post(
     (req: Request, res: Response, next: NextFunction) =>
         authController.register(req, res, next),
 );
+
+//! Promice related bug not happen to me, but if happend then the solution is:
+/* 
+router.post(
+    "/register",
+    registerValidator,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.register(req, res, next) as unknown as RequestHandler,
+); 
+*/ //: Same goes for all route
 
 router.post(
     "/login",
