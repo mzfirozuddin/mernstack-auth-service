@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { User } from "../../src/entity/User";
 import { Roles } from "../../src/constants";
 import request from "supertest";
