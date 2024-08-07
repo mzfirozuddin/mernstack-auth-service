@@ -15,6 +15,7 @@ const {
     REFRESH_TOKEN_SECRET,
     JWKS_URI,
     PRIVATE_KEY,
+    CLIENT_URI,
 } = process.env;
 
 export const Config = {
@@ -28,4 +29,5 @@ export const Config = {
     REFRESH_TOKEN_SECRET,
     JWKS_URI,
     PRIVATE_KEY,
+    CLIENT_URI,
 };
