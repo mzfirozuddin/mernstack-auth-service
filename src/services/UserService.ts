@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
-import { LimitedUserData, UserData } from "../types";
+import { LimitedUserData, UserData, UserQueryParams } from "../types";
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
 
@@ -77,6 +77,7 @@ export class UserService {
     async findById(id: number) {
         return await this.userRepository.findOne({
             where: { id },
+            relations: { tenant: true },
         });
     }
 
@@ -99,8 +100,18 @@ export class UserService {
         }
     }
 
-    async getAll() {
-        return await this.userRepository.find();
+    async getAll(validatedQuery: UserQueryParams) {
+        // return await this.userRepository.find(); // Problem
+
+        //: Add Pagination
+        const queryBuilder = this.userRepository.createQueryBuilder();
+        const result = await queryBuilder
+            .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
+            .take(validatedQuery.perPage)
+            .getManyAndCount();
+
+        // console.log(result);
+        return result;
     }
 
     async deleteById(userId: number) {
