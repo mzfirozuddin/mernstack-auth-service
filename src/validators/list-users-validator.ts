@@ -2,6 +2,22 @@ import { checkSchema } from "express-validator";
 
 export default checkSchema(
     {
+        q: {
+            trim: true,
+            customSanitizer: {
+                options: (value) => {
+                    return value ? value : "";
+                },
+            },
+        },
+
+        role: {
+            customSanitizer: {
+                options: (value) => {
+                    return value ? value : "";
+                },
+            },
+        },
         currentPage: {
             // in: ["query"], //: If you mention in checkSchema's second parameter then no need to tell here
             // '2', undefined, 'jhgyufgh'
