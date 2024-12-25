@@ -148,6 +148,7 @@ export class UserService {
         }
 
         const result = await queryBuilder
+            .leftJoinAndSelect("user.tenant", "tenant") //- Doing left join "user.tenantId" with "tenant.id" (2nd parameter is tenant alias name, you can give it anything)
             .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
             .take(validatedQuery.perPage)
             .orderBy("user.id", "DESC")
