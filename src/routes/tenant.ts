@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { TenantController } from "../controllers/TenantController";
 import { TenantService } from "../services/TenantService";
 import { AppDataSource } from "../config/data-source";
@@ -9,6 +9,7 @@ import { canAccess } from "../middlewares/canAccess";
 import { Roles } from "../constants";
 import tenantValidator from "../validators/tenant-validator";
 import { CreateTenantRequest } from "../types";
+import listTenantValidator from "../validators/list-tenant-validator";
 
 const router = express.Router();
 
@@ -34,7 +35,12 @@ router.patch(
         tenantController.update(req, res, next),
 );
 
-router.get("/", (req, res, next) => tenantController.getAll(req, res, next));
+router.get(
+    "/",
+    listTenantValidator,
+    (req: Request, res: Response, next: NextFunction) =>
+        tenantController.getAll(req, res, next),
+);
 router.get("/:id", authenticate, canAccess([Roles.ADMIN]), (req, res, next) =>
     tenantController.getOne(req, res, next),
 );
