@@ -16,9 +16,17 @@ export class TenantService {
     async getAll(validatedQuery: TenantQueryParams) {
         // return await this.tenantRepository.find();
 
-        //: Add pagination
         const queryBuilder = this.tenantRepository.createQueryBuilder("tenant"); //- Here "tenant" is alias name
 
+        //: Adding search functionality
+        if (validatedQuery.q) {
+            const searchTerm = `%${validatedQuery.q}%`;
+            queryBuilder
+                .where("tenant.name ILike :q", { q: searchTerm })
+                .orWhere("tenant.address ILike :q", { q: searchTerm });
+        }
+
+        //: Add pagination
         const result = await queryBuilder
             .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
             .take(validatedQuery.perPage)

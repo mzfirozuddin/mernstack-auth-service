@@ -2,6 +2,15 @@ import { checkSchema } from "express-validator";
 
 export default checkSchema(
     {
+        q: {
+            trim: true,
+            customSanitizer: {
+                options: (value) => {
+                    return value ? value : "";
+                },
+            },
+        },
+
         currentPage: {
             customSanitizer: {
                 options: (value) => {
