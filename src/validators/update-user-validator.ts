@@ -16,9 +16,22 @@ export default checkSchema({
         notEmpty: true,
         trim: true,
     },
-    // tenantId: {
-    //     notEmpty: true,
-    //     errorMessage: "Tenant is required!",
-    //     trim: true,
-    // },
+    tenantId: {
+        // notEmpty: true,
+        // errorMessage: "Tenant is required!",
+        // trim: true,
+        custom: {
+            options: (value: string, { req }) => {
+                const role = req.body.role;
+                if (role === "admin") {
+                    return true;
+                } else {
+                    if (value === "") {
+                        throw new Error("Tenant is required!");
+                    }
+                    return !!value;
+                }
+            },
+        },
+    },
 });
